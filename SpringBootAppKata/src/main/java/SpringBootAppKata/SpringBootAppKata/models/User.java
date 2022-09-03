@@ -1,14 +1,17 @@
 package SpringBootAppKata.SpringBootAppKata.models;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
-@Entity
-@Table(name = "Users")
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+import java.util.Objects;
+
+@Entity(name = "User")
+@Table(name = "users")
 public class User {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +28,7 @@ public class User {
 
     @Column(name = "email")
     @NotEmpty(message = "Email should not be empty")
-    @Email
+    @Email(message = "Email should be valid")
     private String email;
 
     public User() {
@@ -79,6 +82,17 @@ public class User {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && age == user.age && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, age, email);
+    }
 }
-
-

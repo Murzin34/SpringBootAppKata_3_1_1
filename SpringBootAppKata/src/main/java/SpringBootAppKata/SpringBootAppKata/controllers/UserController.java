@@ -1,8 +1,7 @@
 package SpringBootAppKata.SpringBootAppKata.controllers;
 
 import SpringBootAppKata.SpringBootAppKata.models.User;
-import SpringBootAppKata.SpringBootAppKata.services.UsersService;
-import org.springframework.beans.factory.annotation.Autowired;
+import SpringBootAppKata.SpringBootAppKata.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,26 +11,24 @@ import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
-public class UsersController {
+public class UserController {
 
-    private final UsersService usersService;
+    private final UserService userService;
 
-    @Autowired
-    public UsersController(UsersService usersService) {
-        this.usersService = usersService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping()
     public String index(Model model) {
-        model.addAttribute("users", usersService.findAll());
-
+        model.addAttribute("users", userService.getUsers());
         return "users/index";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
         model.addAttribute("user",
-                usersService.findOne(id));
+                userService.getUserById(id));
         return "users/show";
     }
 
@@ -45,14 +42,14 @@ public class UsersController {
                          BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return "users/new";
-        usersService.save(user);
+        userService.save(user);
         return "redirect:/users";
     }
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
         model.addAttribute("user",
-                usersService.findOne(id));
+                userService.getUserById(id));
         return "users/edit";
     }
 
@@ -63,13 +60,13 @@ public class UsersController {
         if (bindingResult.hasErrors()) {
             return "users/edit";
         }
-        usersService.update(id, user);
+        userService.update(id, user);
         return "redirect:/users";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
-        usersService.delete(id);
+        userService.delete(id);
         return "redirect:/users";
     }
 }
